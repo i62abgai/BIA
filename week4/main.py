@@ -7,15 +7,9 @@ import sys
 import itertools
 
 
-def computeFitness(sol):
-    fitness = 1/float(getSolDistance(sol))
-    return fitness
-
-
 def getAllPerms(n):
     route = np.arange(n)
-    routes = perm(route, 0, n)
-    return routes
+    perm(route, 0, n)
 
 
 def perm(route, start, ending):
@@ -26,9 +20,11 @@ def perm(route, start, ending):
 
 
 def plotResults(time, cities):
-    figure = plt.figure()
+    plt.figure()
     axes = plt.axes()
     axes.plot(cities, time)
+    plt.xlabel('N Cities')
+    plt.ylabel('Time (s)')
     plt.show()
 
 
@@ -42,8 +38,8 @@ def main():
     max = int(sys.argv[2])+1
     time_elapsed = []
     for i in range(min, max):
-        time_start = time.process_time()
-        all_perms = getAllPerms(i)
+        time.process_time()
+        getAllPerms(i)
         time_elapsed.append(time.process_time())
     count = min
     cities = []
