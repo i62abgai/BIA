@@ -7,14 +7,37 @@ from matplotlib import cm
 import random
 
 class solGenerator:
+    """[Class with only one function that allows to generate random solutions]
+    """
     def generateRandomSolution(self, dimension, min, max):
+        """Function that generates a random solution between bounds and with a determined dimension
+
+        Arguments:
+            dimension {[int]} -- [Dimension of the problem (In 2D problems, there are 2 dimensions)]
+            minimum {[float]} -- [Minimum bound]
+            maximum {[float]} -- [Maximum bound]
+
+        Returns:
+            [list] -- [Solution with described dimension between the bounds]
+        """
         point = []
         for i in range(0,dimension):
             point.append(random.randint(min,max))
         return point
 
 class evaluator:
+    """[Class with one function that evaluates the fitness of a solution] 
+    """    
     def computeFitness(self, functionName, point):
+        """Function that evaluates the fitness of a solution and returns it
+        
+        Arguments:
+            functionName {[function]} -- [Name of the function that evaluates the fitness]
+            point {[list]} -- [Solution with n dimensions]
+        
+        Returns:
+            [float] -- [Value of the solution evaluated with the function]
+        """  
         fitness = functionName(point)
         return fitness
 
@@ -108,6 +131,17 @@ def testLevyFunction(points):
 
 
 def plotFunction(functionName, min, max, step):
+    """Function that plots the results of the algorithm and draws the function in all values
+    
+    Arguments:
+        functionName {[function]} -- [Name of the function that evaluates the fitness]
+        minimum {[float]} -- [Minimum bound]
+        maximum {[float]} -- [Maximum bound]
+        step {[type]} -- [Step to have a good resolution in the plotting, the smaller the better]
+    
+    Returns:
+        [axis] -- [Returns the axis plot of the function]
+    """ 
     fig = plt.figure()
     ax = plt.axes(projection="3d")
 
@@ -128,6 +162,18 @@ def plotFunction(functionName, min, max, step):
     return ax
 
 def runSAExperiment(numPopu, maxIterations, functionName, min, max):
+    """Function that runs the simulated annealing experiment
+    
+    Arguments:
+        numPopu {[int]} -- [Size of the popultion]
+        maxIterations {[int]} -- [Number of maximum iterations]
+        functionName {[function]} -- [Function name which evaluates the fitness]
+        minimum {[float]} -- [Minimum bound]
+        maximum {[float]} -- [Maximum bound]
+    
+    Returns:
+        [list] -- [List of solutions at the end of the algorithm]
+    """     
     functionResults = []
     eval = evaluator()
     sGen = solGenerator()
@@ -171,6 +217,18 @@ def runSAExperiment(numPopu, maxIterations, functionName, min, max):
     return functionResults
 
 def runALSExperiment(numPopu, numNeighbours, functionName, min, max):
+    """Function that runs the local search experiment
+    
+    Arguments:
+        numPopu {[int]} -- [Size of the popultion]
+        numNeighbours {[int]} -- [Size of the neighbor]
+        functionName {[function]} -- [Function name which evaluates the fitness]
+        minimum {[float]} -- [Minimum bound]
+        maximum {[float]} -- [Maximum bound]
+    
+    Returns:
+        [list] -- [List of solutions at the end of the algorithm]
+    """ 
     functionResults = []
     eval = evaluator()
     sGen = solGenerator()
@@ -203,6 +261,18 @@ def runALSExperiment(numPopu, numNeighbours, functionName, min, max):
 
 
 def runExperiments(numPopu, numNeighbours, functionNames, functionMin, functionMax):
+    """Function that runs all the experiments for each function
+    
+    Arguments:
+        numPopulation {[int]} -- [Size of the popultion]
+        numSolutions {[int]} -- [Size of the neighbor]
+        functionNames {[function]} -- [Function name which evaluates the fitness]
+        functionMin {[float]} -- [Minimum bound]
+        functionMax {[float]} -- [Maximum bound]
+    
+    Returns:
+        [list] -- [List of Solutions obtained for each function]
+    """  
     results = []
     als = []
     sa = []

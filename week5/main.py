@@ -11,14 +11,33 @@ f = 0.99
 c = 0.95
 mem = []
 
-def generateRandomSolution(dimension, minimal, maximum):
+def generateRandomSolution(dimension, minimum, maximum):
+    """Function that generates a random solution (Permutation)
+    
+    Arguments:
+        dimension {[int]} -- [Dimension of the problem]
+        minimum {[float]} -- [Minimum bound]
+        maximum {[float]} -- [Maximum bound]
+    
+    Returns:
+        [list] -- [List with a random value for each dimension]
+    """    
     point = []
     for i in range(0, dimension):
-        point.append(random.uniform(minimal, maximum))
+        point.append(random.uniform(minimum, maximum))
     return point
 
 
 def computeFitness(functionName, point):
+    """Function that evaluates the fitness of a solution and returns it
+    
+    Arguments:
+        functionName {[function]} -- [Name of the function that evaluates the fitness]
+        point {[list]} -- [Solution with n dimensions]
+    
+    Returns:
+        [float] -- [Value of the solution evaluated with the function]
+    """  
     fitness = functionName(point)
     return fitness
 
@@ -113,19 +132,38 @@ def testLevyFunction(points):
     return part1 + sum
 
 
-def initPop(popSize, minimal, maximum):
+def initPop(popSize, minimum, maximum):
+    """Function that initializes a population with random solutions
+    
+    Arguments:
+        popSize {[int]} -- [Size of the population]
+        minimum {[float]} -- [Minimum bound]
+        maximum {[float]} -- [Maximum bound]
+    
+    Returns:
+        [list] -- [List of random solutions]
+    """   
     pop = []
     for i in range(0, popSize):
-        pop.append(generateRandomSolution(2, minimal, maximum))
+        pop.append(generateRandomSolution(2, minimum, maximum))
     return pop
 
 #Function that returns a new vector with the corrected limits
-def checkLimits(vec, minimal, maximum):
-
+def checkLimits(vec, minimum, maximum):
+    """Function that checks the limits of a given solution
+    
+    Arguments:
+        vec {[sol]} -- [Solution]
+        minimum {[float]} -- [Minimum bound]
+        maximum {[float]} -- [Maximum bound]
+    
+    Returns:
+        [sol] -- [Returns the solution inside the bounds]
+    """
     vec_new = []
     for i in range(len(vec)):
-        if vec[i] < minimal:
-            vec_new.append(minimal)
+        if vec[i] < minimum:
+            vec_new.append(minimum)
         elif vec[i] > maximum:
             vec_new.append(maximum)
         else:
@@ -134,6 +172,15 @@ def checkLimits(vec, minimal, maximum):
 
 
 def recombinateIndividual(xi, v):
+    """Function that recombines a solution with some probability
+    
+    Arguments:
+        xi {[sol]} -- [Solution]
+        v {[list]} -- [Mutation vector]
+    
+    Returns:
+        [sol] -- [Recombined individual]
+    """    
     global c
     recombinated = []
     for i in range(len(xi)):
@@ -144,8 +191,18 @@ def recombinateIndividual(xi, v):
             recombinated.append(xi[i])
     return recombinated
 
-#Function that mutates the population and gets the next population of individuals
-def mutatePop(pop, functionName, minimal, maximum):
+def mutatePop(pop, functionName, minimum, maximum):
+    """Function that mutates the population and gets the next population of individuals
+    
+    Arguments:
+        pop {[list]} -- [List of solutions]
+        functionName {[function]} -- [Name of the fitness function]
+        minimum {[float]} -- [Minimum bound]
+        maximum {[float]} -- [Maximum bound]
+    
+    Returns:
+        [pop] -- [New population with recombined individuals]
+    """    
     global f
     vPop = []
     popFitness = []
@@ -168,7 +225,7 @@ def mutatePop(pop, functionName, minimal, maximum):
             v.append(h + f * (j - k))
 
         #Check the limits to not get exceeded
-        v = checkLimits(v, minimal, maximum)
+        v = checkLimits(v, minimum, maximum)
 
         #Do the "Crossover" with the mutated vector
         vRecombined = recombinateIndividual(xi, v)
@@ -190,18 +247,31 @@ def mutatePop(pop, functionName, minimal, maximum):
     return vPop, popFitness
 
 
-def runDEexperiment(numGen, popSize, functionName, minimal, maximum):
+def runDEexperiment(numGen, popSize, functionName, minimum, maximum):
+    """Function that runs the differential evolution experiment
+    
+    Arguments:
+        numGen {[int]} -- [Number of generations]
+        popSize {[int]} -- [Size of the population]
+        functionName {[function]} -- [Function name which evaluates the fitness]
+        minimum {[float]} -- [Minimum bound]
+        maximum {[float]} -- [Maximum bound]
+    
+    Returns:
+        [list] -- [List of solutions at the end of the algorithm]
+    """   
+           
     functionResults = []
     bestFitness = 0
     bestPoint = [0, 0]
     global mem
     #Init the population
-    pop = initPop(popSize, minimal, maximum)
+    pop = initPop(popSize, minimum, maximum)
     #Iterate thorugh each generation generating a new population based on the mutations
     #of the previous generation
     for j in range(numGen):
         nextPop, nextPopFitness = mutatePop(
-            pop, functionName, minimal, maximum)
+            pop, functionName, minimum, maximum)
         bestPopulationIndex = nextPopFitness.index(min(nextPopFitness))
         bestPopulationPoint = nextPop[bestPopulationIndex]
         bestPopulationFitness = min(nextPopFitness)
@@ -221,6 +291,19 @@ def runDEexperiment(numGen, popSize, functionName, minimal, maximum):
 
 
 def runExperiments(numGen, popSize, functionName, functionMin, functionMax, index):
+    """Function that runs the differential evolution for all functions
+    
+    Arguments:
+        numGen {[int]} -- [Number of generations]
+        popSize {[int]} -- [Size of the population]
+        functionName {[function]} -- [Function name which evaluates the fitness]
+        functionMin {[float]} -- [Minimum bound]
+        functionMax {[float]} -- [Maximum bound]
+        index {[int]} -- [Index to get the step, minimum and maximum for each function]
+    
+    Returns:
+        [list] -- [List of solutions at the end of the algorithm]
+    """ 
     results = []
     results.append(runDEexperiment(numGen, popSize,
                                    functionName, functionMin[index], functionMax[index]))
@@ -228,6 +311,8 @@ def runExperiments(numGen, popSize, functionName, functionMin, functionMax, inde
 
 
 def plotMem():
+    """Function that plots the best solution for each generation
+    """    
     global mem
     fig, ax = plt.subplots()
     ax.plot(mem)
@@ -236,12 +321,23 @@ def plotMem():
     ax.grid()
 
 
-def plotFunction(functionName, minimal, maximum, step):
+def plotFunction(functionName, minimum, maximum, step):
+    """Function that plots the shape of the function and the best solution
+    
+    Arguments:
+        functionName {[function]} -- [Function name which evaluates the fitness]
+        minimum {[float]} -- [Minimum bound]
+        maximum {[float]} -- [Maximum bound]
+        step {[float]} -- [Step of the representation of the function]
+    
+    Returns:
+        [type] -- [description]
+    """    
     fig = plt.figure()
     ax = plt.axes(projection="3d")
 
-    X = np.arange(minimal, maximum, step)
-    Y = np.arange(minimal, maximum, step)
+    X = np.arange(minimum, maximum, step)
+    Y = np.arange(minimum, maximum, step)
     X, Y = np.meshgrid(X, Y)
     Z = []
     z_rows = []
@@ -282,7 +378,7 @@ def main():
     c = float(sys.argv[5])
     # Parse the arg to function
     functionName = dispatcher[functionArgv]
-    # Get the index of the function, to get the minimal, maximum and step for plotting
+    # Get the index of the function, to get the minimum, maximum and step for plotting
     index = list(dispatcher.keys()).index(functionArgv)
 
     abcises = []

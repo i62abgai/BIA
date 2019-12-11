@@ -8,11 +8,23 @@ import itertools
 
 
 def getAllPerms(n):
+    """[Function that generates a list with length n and creates all the permutations for that length]
+    
+    Arguments:
+        n {[int]} -- [Length of the list]
+    """    
     route = np.arange(n)
     perm(route, 0, n)
 
 
 def perm(route, start, ending):
+    """[Function that generates all the permutations in a recursive way. This method is called backtracking]
+    
+    Arguments:
+        route {[list]} -- [List with numbers]
+        start {[int]} -- [Position to change]
+        ending {[int]} -- [Length of the list]
+    """    
     for i in range(start, ending):
         route[start], route[i] = route[i], route[start]
         perm(route, start+1, ending)
@@ -20,6 +32,12 @@ def perm(route, start, ending):
 
 
 def plotResults(time, cities):
+    """[Function that plots the results of the algorithm]
+    
+    Arguments:
+        time {[list]} -- [List with the time that took to generate all the permutations]
+        cities {[list]} -- [List with the number of cities to generate permutations]
+    """    
     plt.figure()
     axes = plt.axes()
     axes.plot(cities, time)

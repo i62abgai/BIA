@@ -210,6 +210,14 @@ class Particle:
 
 
 def checkLimits(newPos):
+    """Function that checks the limits of a given solution
+    
+    Arguments:
+        newPos {[sol]} -- [Solution]
+   
+    Returns:
+        [sol] -- [Returns the solution inside the bounds]
+    """  
     global minimal, maximum
     for i in range(len(newPos)):
         if newPos[i] > maximum:
@@ -286,6 +294,14 @@ def movePop(pop):
 
 
 def runSOMAExperiment(numGen, popSize):
+    """Function that runs the SOMA experiment
+    
+    Arguments:
+        numGen {[int]} -- [Number of generations]
+        popSize {[int]} -- [Size of the population]
+    Returns:
+        [list] -- [List of solutions at the end of the algorithm]
+    """ 
     functionResults = []
     global mem, leaderPos, leaderFitness, functionName, minimal, maximum, ax, fig, pop, gen, Z
     X, Y, Z = getMesh()
@@ -307,12 +323,27 @@ def runSOMAExperiment(numGen, popSize):
 
 
 def runExperiments(numGen, popSize):
+    """Function that runs all the experiments for each function
+    
+    Arguments:
+        numGen {[int]} -- [Number of generations]
+        popSize {[int]} -- [Size of the population]
+        
+    Returns:
+        [list] -- [List of solutions at the end of the algorithm]
+    """ 
     results = []
     results.append(runSOMAExperiment(numGen, popSize))
     return results
 
 
 def plotSwarm(i, newPos):
+    """Function that plots the swarm and the individual that is moving
+    
+    Arguments:
+        i {[int]} -- [Index of the particle that is moving]
+        newPos {[sol]} -- [New position where the particle is moving]
+    """  
     global minimal, maximum, leaderPos, ax, fig, pop, gen, Z, colorBar
     if plt.fignum_exists(1):
         ax.clear()
@@ -344,6 +375,8 @@ def plotSwarm(i, newPos):
 
 
 def plotMem():
+    """Function that plots the memory created through the generations
+    """    
     global mem
     fig, ax = plt.subplots()
     ax.plot(mem)
@@ -368,14 +401,14 @@ def getMesh():
 
 
 def plotFunction(figure):
-    """[Function that prints the heatmap]
-
+    """Plot the optimization function
+    
     Arguments:
-        figure {[type]} -- [description]
-
+        figure {[figure]} -- [Figure to plot the swarm in each movement of population]    
+    
     Returns:
-        [type] -- [description]
-    """
+        [axis] -- [Returns the axis for that figure]
+    """    
     global minimal, maximum, functionName, step, fig, Z
     axPlot = plt.axes(projection="3d")
 

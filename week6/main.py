@@ -131,7 +131,17 @@ def generateRandomSolution():
 
 
 class Particle:
+    """[Class particle that represents one individual of the swarm
+            - actualPos : Is the actual position of the particle
+            - actualFitness : The fitness of the actual position of the particle
+            - pBest : Is the best position of the particle
+            - pBestFitness : The fitness of the best position of the particle
+            - velocity : Array that changes the direction of the movement of the particle
+        ]
+    """    
     def __init__(self):
+        """Constructor of the class, initializes the properties of the class
+        """        
         self.actualPos = generateRandomSolution()
         self.actualFitness = -1
         self.pBest = self.actualPos
@@ -139,6 +149,10 @@ class Particle:
         self.velocity = np.array(0)
 
     def changePos(self):
+        """Function that changes de position of the particle
+        based on the velocity vector and
+        the actual position
+        """        
         global minimal, maximum
         self.changeVel()
         self.actualPos = self.actualPos + self.velocity
@@ -150,7 +164,10 @@ class Particle:
         self.computeParticleFitness()
 
     def changeVel(self):
-
+        """Function that changes the velocity vector based
+        on the best position of the particle and the best
+        position of the swarm
+        """
         global c1, c2, gBest
         r = random.uniform(0, 1)
         self.velocity = self.velocity + \
@@ -158,6 +175,10 @@ class Particle:
              c2 * r * (gBest - self.actualPos))
 
     def computeParticleFitness(self):
+        """Function that computes the fitness of the particle
+        and changes the best particle position if it improves it
+        
+        """        
         self.actualFitness = computeFitness(self.actualPos)
         if (self.actualFitness < self.pBestFitness) or (self.pBestFitness == -1):
             self.pBest = self.actualFitness
@@ -165,6 +186,15 @@ class Particle:
 
 
 def computeFitness(point):
+    """Function that computes the fitness of a particle in
+    the function
+    
+    Arguments:
+        point {[list]} -- [List of n dimensions with one value for each dimension]
+    
+    Returns:
+        [float] -- [Value of the fitness for that point/solution]
+    """    
     global functionName
     fitness = functionName(point)
     return fitness
@@ -175,6 +205,14 @@ def computeFitness(point):
 
 
 def initPop(popSize):
+    """Function that initializes the population of solutions
+    
+    Arguments:
+        popSize {[int]} -- [Size of the population]
+    
+    Returns:
+        [list] -- [List of solutions (particles)]
+    """    
     global minimal, maximum
     pop = []
     for i in range(0, popSize):
@@ -186,6 +224,14 @@ def initPop(popSize):
 
 
 def movePop(pop):
+    """Function that move each particle to a new position
+    
+    Arguments:
+        pop {[list]} -- [List of particles]
+    
+    Returns:
+        [list] -- [List with the particles moved to new position]
+    """    
     global functionName, minimal, maximum, gBestFitness, gBest
     for j in range(len(pop)):
         pop[j].changePos()
@@ -201,6 +247,15 @@ def movePop(pop):
 
 
 def runPSExperiment(numGen, popSize, fig):
+    """Function that runs the particle swarm experiment
+    
+    Arguments:
+        numGen {[int]} -- [Number of generations]
+        popSize {[int]} -- [Size of the population]
+        fig {[figure]} -- [Figure to plot the swarm in each movement of population]
+    Returns:
+        [list] -- [List of solutions at the end of the algorithm]
+    """ 
     functionResults = []
     global mem, gBest, gBestFitness, functionName, minimal, maximum
     ax = fig.add_subplot(111)
@@ -221,12 +276,29 @@ def runPSExperiment(numGen, popSize, fig):
 
 
 def runExperiments(numGen, popSize, fig):
+    """Function that runs all the experiments for each function
+    
+    Arguments:
+        numGen {[int]} -- [Number of generations]
+        popSize {[int]} -- [Size of the population]
+        fig {[figure]} -- [Figure to plot the swarm in each movement of population]
+    Returns:
+        [list] -- [List of solutions at the end of the algorithm]
+    """ 
     results = []
     results.append(runPSExperiment(numGen, popSize, fig))
     return results
 
 
 def plotSwarm(fig, ax, pop, gen):
+    """Function that plots the swarm
+    
+    Arguments:
+        fig {[figure]} -- [Figure to plot the swarm in each movement of population]
+        ax {[axis]} -- [Axis of the figure]
+        pop {[list]} -- [List of particles]
+        gen {[int]} -- [Number of the generation]
+    """    
     global minimal, maximum, gBest
     if plt.fignum_exists(1):
         ax.clear()
@@ -243,9 +315,9 @@ def plotSwarm(fig, ax, pop, gen):
         time.sleep(0.2)
 
 
-# Function that plots the memory created through the generations
-
 def plotMem():
+    """Function that plots the memory created through the generations
+    """    
     global mem
     fig, ax = plt.subplots()
     ax.plot(mem)
@@ -253,10 +325,15 @@ def plotMem():
     ax.set(xlabel='Gens', ylabel='Fitness')
     ax.grid()
 
-# Plot the optimization function
-
-
 def plotFunction(fig):
+    """Plot the optimization function
+    
+    Arguments:
+        fig {[figure]} -- [Figure to plot the swarm in each movement of population]    
+    
+    Returns:
+        [axis] -- [Returns the axis for that figure]
+    """    
     global minimal, maximum, functionName, step
     ax = plt.axes(projection="3d")
 

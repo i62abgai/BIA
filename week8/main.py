@@ -14,7 +14,15 @@ v = 0
 
 
 class Ant:
+    """[Class for the Ant representation]
+    """    
     def __init__(self, start, i):
+        """Constructor of the class Ant
+        
+        Arguments:
+            start {[int]} -- [City where the ant is going to start]
+            i {[int]} -- [Index of the ant]
+        """        
         self.antIndex = i
         self.antFitness = 0
         self.actualPos = start
@@ -22,6 +30,8 @@ class Ant:
         self.visitedCities.append(start)
 
     def move(self):
+        """Function that moves the ant to a new city based on the pheromones and the distance
+        """        
         global phMatrix, adjacencyMatrix, city_list, alpha, beta
         probs = []
         ind = []
@@ -49,6 +59,12 @@ class Ant:
 
 
 def vaporize(movements, pop):
+    """Function that actualizes the matrix pheromones when the ants have moved
+    
+    Arguments:
+        movements {[list]} -- [List of list with the record of the movements that the ants have made]
+        pop {[list]} -- [List of ants]
+    """    
     global phMatrix, v
     for i, m in enumerate(movements):
         phMatrix[m[0]][m[1]] = phMatrix[m[0]][m[1]] + (1/pop[i].antFitness)
@@ -59,17 +75,41 @@ def vaporize(movements, pop):
 
 
 class City:
+    """[Class for the representation of cities]
+    """    
     def __init__(self, x, y):
+        """Constructor of the class City
+        
+        Arguments:
+            x {[float]} -- [x coordinate]
+            y {[float]} -- [y coordinate]
+        """        
         self.x = x
         self.y = y
 
     def euclideanDistance(self, city):
+        """Function that calculates the euclidean between the object city, and another city
+
+        Arguments:
+            city {[City]} -- [City object]
+
+        Returns:
+            [float] -- [Euclidean distance]
+        """    
         x = abs(self.x - city.x)**2
         y = abs(self.y - city.y)**2
         return np.sqrt(x+y)
 
 
 def getSolDistance(sol):
+    """Function that calculates the total distance between all the cities in a solution
+
+    Arguments:
+        sol {[list]} -- [List of City objects]
+
+    Returns:
+        [float] -- [Distance between all the cities in a solution]
+    """
     global adjacencyMatrix
     distance = 0
     for i in range(len(sol)-1):
@@ -83,16 +123,38 @@ def getSolDistance(sol):
 
 
 def computeFitness(sol):
+    """Function that calculates the fitness for a solution.
+    Because I wanted to maximize instead of minimizing I divide 1/distance
+
+    Arguments:
+        sol {[list]} -- [List of City objects]
+
+    Returns:
+        [float] -- [1 divided by the total distance of the solution]
+    """
     fitness = 1/float(getSolDistance(sol))
     return fitness
 
 
 def generateRandomSolution(n_ants):
+    """Function that generates a random solution (Permutation)
+
+    Returns:
+        [list] -- [List with a random permutation]
+    """
     perm = np.random.permutation(n_ants)
     return perm
 
 
 def initPop(n_ants):
+    """Function that initializes a population with random solutions
+
+    Arguments:
+        n_ants {[int]} -- [Number of ants]
+
+    Returns:
+        [list] -- [List of random solutions]
+    """
     global n_nodes
     pop = []
     randInit = generateRandomSolution(n_ants)
@@ -103,6 +165,11 @@ def initPop(n_ants):
 
 
 def readInstance(fileName):
+    """Function that reads a file with the cities and its coordinates, and calculates the adjacency matrix
+    
+    Arguments:
+        fileName {[string]} -- [Name of the file where the instance is saved]
+    """  
     global n_nodes, adjacencyMatrix, phMatrix, city_list
     data = pd.read_csv(fileName, header=None)
     lol = data.values.tolist()
@@ -122,6 +189,14 @@ def readInstance(fileName):
 
 
 def getBest(pop):
+    """Function that gets the best ant of a population of ants
+    
+    Arguments:
+        pop {[list]} -- [List of ants]
+    
+    Returns:
+        [ant] -- [Returns the best ant]
+    """    
     best = pop[0]
     for i, a in enumerate(pop):
         if pop[i].antFitness < best.antFitness:
@@ -130,6 +205,16 @@ def getBest(pop):
 
 
 def runAntsexperiment(n_ants, gens):
+    """Function that runs the ants algorithm experiment
+    
+    Arguments:
+        n_ants {[int]} -- [Number of ants]
+        gens {[int]} -- [Number of generations]
+    
+    Returns:
+        [sol] -- [Returns the best solution obtained in all generations]
+        [list] -- [Returns the best solution for each generation]
+    """   
     global n_nodes
     bestSol = -1
     bestSolFitness = -1
@@ -161,6 +246,12 @@ def runAntsexperiment(n_ants, gens):
 
 
 def plotResults(mem, bestSol):
+    """Function that plots the results of the algorithm and draws the function in all values
+    
+    Arguments:
+        mem {[list]} -- [List with the best fitness for each generation]
+        bestSol {[sol]} -- [Best solution obtained in all generations]
+    """ 
     global city_list
     fig, axs = plt.subplots(2)
     plt.title(str(bestSol))
@@ -192,7 +283,7 @@ def main():
     global alpha, beta, v
     if len(sys.argv) < 6:
         print("Incorrect number of parameters: \n" +
-              "\t main.py \"instance file\" \"n ants\" ")
+              "\t main.py \"instance file\" \"n ants\" \"gens\" \"alpha\" \"beta\" \"v\"  ")
         return -1
 
     readInstance(sys.argv[1])
